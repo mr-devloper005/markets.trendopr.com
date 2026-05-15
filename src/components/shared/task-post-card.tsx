@@ -81,10 +81,10 @@ const cardStyles = {
   },
   'press-wire': {
     frame:
-      'rounded-2xl border border-[#e5e5e5] bg-white shadow-[0_14px_40px_rgba(23,23,23,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-[#DA0037]/25 hover:shadow-[0_20px_50px_rgba(218,0,55,0.09)]',
-    muted: 'text-[#444444]',
-    title: 'text-[#171717]',
-    badge: 'bg-[#DA0037] text-white',
+      'rounded-2xl border border-[#f0d8cc] bg-white shadow-[0_14px_40px_rgba(11,3,45,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-[#843B62]/30 hover:shadow-[0_20px_50px_rgba(132,59,98,0.10)]',
+    muted: 'text-[#3d2a4a]/70',
+    title: 'text-[#0B032D]',
+    badge: 'bg-[#843B62] text-white',
   },
 } as const
 

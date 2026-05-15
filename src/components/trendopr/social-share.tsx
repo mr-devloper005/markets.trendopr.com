@@ -38,7 +38,7 @@ export function SocialShareBar({ url, title }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#444444]">Share</span>
+      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#3d2a4a]/60">Share</span>
       {items.map((item) => (
         <a
           key={item.label}
@@ -46,7 +46,7 @@ export function SocialShareBar({ url, title }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={item.label}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#e5e5e5] bg-white text-[#171717] transition hover:border-[#DA0037]/40 hover:text-[#DA0037]"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#f0d8cc] bg-white text-[#0B032D] transition hover:border-[#843B62]/40 hover:text-[#843B62]"
         >
           {item.icon}
         </a>
@@ -54,7 +54,7 @@ export function SocialShareBar({ url, title }: Props) {
       <button
         type="button"
         aria-label="Copy link"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#e5e5e5] bg-white text-[#171717] transition hover:border-[#DA0037]/40 hover:text-[#DA0037]"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#f0d8cc] bg-white text-[#0B032D] transition hover:border-[#843B62]/40 hover:text-[#843B62]"
         onClick={() => {
           void navigator.clipboard?.writeText(url)
         }}
