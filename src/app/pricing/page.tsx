@@ -12,11 +12,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({
     path: '/pricing',
     title: `Pricing | ${SITE_CONFIG.name}`,
-    description: 'Compare Basic, Pro, and Premium press distribution on TrendoPR.com.',
+    description: 'Compare Basic, Pro, and Premium press distribution on markets.trendopr.com.',
     openGraphTitle: `Pricing | ${SITE_CONFIG.name}`,
     openGraphDescription: 'Transparent tiers for distribution depth, analytics, and add-ons.',
     image: SITE_CONFIG.defaultOgImage,
-    keywords: ['press release pricing', 'distribution plans', 'TrendoPR'],
+    keywords: ['press release pricing', 'distribution plans', 'markets.trendopr.com'],
   })
 }
 
@@ -102,7 +102,7 @@ export default function PricingPage() {
               Pricing built around distribution depth—not surprise limits.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[#444444]">
-              Choose the lane that matches your publishing tempo. Every tier includes the TrendoPR archive, responsive release
+              Choose the lane that matches your publishing tempo. Every tier includes the markets.trendopr.com archive, responsive release
               pages, and share tooling—so you are never buying a hollow skeleton tier.
             </p>
           </div>
@@ -197,7 +197,7 @@ export default function PricingPage() {
 
         <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
           <h2 className="text-2xl font-semibold tracking-[-0.02em]">FAQ</h2>
-          <p className="mt-2 text-sm text-[#444444]">Straight answers about how TrendoPR plans behave in production.</p>
+          <p className="mt-2 text-sm text-[#444444]">Straight answers about how markets.trendopr.com plans behave in production.</p>
           <div className="mt-8 space-y-3">
             {faqs.map((item) => (
               <details

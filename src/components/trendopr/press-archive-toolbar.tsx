@@ -28,14 +28,14 @@ export function PressArchiveToolbar() {
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div className="min-w-[220px]">
-        <label htmlFor="archive-category" className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#444444]">
+        <label htmlFor="archive-category" className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3d2a4a]/60">
           Category
         </label>
         <select
           id="archive-category"
           value={category}
           onChange={(e) => router.push(buildUpdatesHref(e.target.value, range))}
-          className="mt-1.5 h-11 w-full rounded-xl border border-[#e0e0e0] bg-white px-3 text-sm text-[#171717] outline-none ring-[#DA0037]/30 focus:ring-2"
+          className="mt-1.5 h-11 w-full rounded-xl border border-[#f0d8cc] bg-white px-3 text-sm text-[#0B032D] outline-none ring-[#843B62]/30 focus:ring-2"
         >
           <option value="all">All categories</option>
           {CATEGORY_OPTIONS.map((item) => (
@@ -47,7 +47,7 @@ export function PressArchiveToolbar() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <span className="mr-1 self-center text-[11px] font-semibold uppercase tracking-[0.18em] text-[#444444]">
+        <span className="mr-1 self-center text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3d2a4a]/60">
           Published
         </span>
         {ranges.map((r) => {
@@ -58,7 +58,7 @@ export function PressArchiveToolbar() {
               href={buildUpdatesHref(category, r.value)}
               scroll={false}
               className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
-                active ? 'bg-[#DA0037] text-white shadow-sm' : 'bg-[#EDEDED] text-[#444444] hover:bg-[#e0e0e0]'
+                active ? 'bg-[#843B62] text-white shadow-sm' : 'bg-[#fce8df] text-[#3d2a4a] hover:bg-[#f0d8cc]'
               }`}
             >
               {r.label}

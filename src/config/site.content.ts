@@ -1,4 +1,4 @@
-import type { TaskKey } from '@/lib/site-config'
+  import type { TaskKey } from '@/lib/site-config'
 
 export const siteContent = {
   navbar: {
@@ -11,7 +11,7 @@ export const siteContent = {
     badge: 'Press desk',
     title: ['Distribute announcements with editorial clarity.'],
     description:
-      'TrendoPR.com is built for communications teams that need dependable publishing, consistent formatting, and a public archive visitors can scan in seconds.',
+      'markets.trendopr.com is built for communications teams that need dependable publishing, consistent formatting, and a public archive visitors can scan in seconds.',
     primaryCta: {
       label: 'Browse release media',
       href: '/press-release',
@@ -29,15 +29,15 @@ export const siteContent = {
   },
   home: {
     metadata: {
-      title: 'TrendoPR.com — Release media distribution',
+      title: 'markets.trendopr.com — Release media distribution',
       description:
-        'Publish announcements, reach media lists, and keep a polished public archive with TrendoPR.com.',
-      openGraphTitle: 'TrendoPR.com — Release media distribution',
+        'Publish announcements, reach media lists, and keep a polished public archive with markets.trendopr.com.',
+      openGraphTitle: 'markets.trendopr.com — Release media distribution',
       openGraphDescription:
         'Editorial-grade release media, distribution workflows, and a searchable archive for your organization.',
-      keywords: ['release media', 'media distribution', 'announcements', 'PR wire', 'TrendoPR'],
+      keywords: ['release media', 'media distribution', 'announcements', 'PR wire', 'markets.trendopr.com'],
     },
-    introBadge: 'Why TrendoPR',
+    introBadge: 'Why markets.trendopr.com',
     introTitle: 'Built for communications velocity without noisy feeds.',
     introParagraphs: [
       'The homepage highlights your newest wire stories first, then guides visitors into pricing, archive search, and contact paths.',
@@ -64,7 +64,7 @@ export const siteContent = {
     badge: 'Ready to publish',
     title: 'Put your next announcement on the wire with confidence.',
     description:
-      'Pair TrendoPR.com with your editorial process—draft, approve, publish, and point stakeholders to a single canonical URL.',
+      'Pair markets.trendopr.com with your editorial process—draft, approve, publish, and point stakeholders to a single canonical URL.',
     primaryCta: {
       label: 'Contact sales',
       href: '/contact',
@@ -75,7 +75,7 @@ export const siteContent = {
     },
   },
   taskSectionHeading: 'Latest release media',
-  taskSectionDescriptionSuffix: 'Fresh stories from the TrendoPR wire.',
+  taskSectionDescriptionSuffix: 'Fresh stories from the markets.trendopr.com wire.',
 } as const
 
 export const taskPageMetadata: Record<Exclude<TaskKey, 'comment' | 'org' | 'social'>, { title: string; description: string }> = {
@@ -109,7 +109,7 @@ export const taskPageMetadata: Record<Exclude<TaskKey, 'comment' | 'org' | 'soci
   },
   mediaDistribution: {
     title: 'Release media',
-    description: 'Browse the TrendoPR.com wire—announcements, launches, and media updates.',
+    description: 'Browse the markets.trendopr.com wire—announcements, launches, and media updates.',
   },
 }
 
@@ -131,7 +131,7 @@ export const taskIntroCopy: Record<
     title: 'Release media',
     paragraphs: [
       'This archive mirrors a classic wire: bold headlines, readable summaries, and fast filters for category and publish window.',
-      'Open any card to read the full story, share it outward, and explore related releases without leaving the TrendoPR system.',
+      'Open any card to read the full story, share it outward, and explore related releases without leaving the markets.trendopr.com system.',
     ],
     links: [
       { label: 'Home', href: '/' },

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, BarChart3, FileText, Share2 } from 'lucide-react'
+import { ArrowRight, Radio, TrendingUp, Globe2, Newspaper, Megaphone, BarChart2, Clock, ChevronRight } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { ContentImage } from '@/components/shared/content-image'
@@ -25,171 +25,229 @@ function getPostImage(post?: SitePost | null) {
   return mediaUrl || contentImage || logo || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80&auto=format&fit=crop'
 }
 
-function excerpt(text?: string | null) {
+function getCategory(post: SitePost): string {
+  const content = post.content && typeof post.content === 'object' ? post.content as Record<string, unknown> : {}
+  return (typeof content.category === 'string' && content.category) || post.tags?.[0] || 'Press Release'
+}
+
+function excerpt(text?: string | null, max = 160) {
   const value = (text || '').trim()
   if (!value) return 'Open the release for the full announcement and supporting context.'
-  return value.length > 180 ? value.slice(0, 177).trimEnd() + '…' : value
+  return value.length > max ? value.slice(0, max - 1).trimEnd() + '…' : value
+}
+
+function formatDate(iso?: string | null) {
+  if (!iso) return ''
+  try {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  } catch {
+    return ''
+  }
 }
 
 export async function HomePageOverride() {
   const posts = await fetchTaskPosts('mediaDistribution', 12, { fresh: true })
-  const grid = posts.slice(0, 9)
+  const hero = posts[0]
+  const featured = posts.slice(1, 4)
+  const grid = posts.slice(4, 10)
 
-  const trust = [
-    { src: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=320&q=70&auto=format&fit=crop', alt: 'Media partner spotlight one' },
-    { src: 'https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=320&q=70&auto=format&fit=crop', alt: 'Media partner spotlight two' },
-    { src: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=320&q=70&auto=format&fit=crop', alt: 'Media partner spotlight three' },
-    { src: 'https://images.unsplash.com/photo-1520607162513-77705c0f310d?w=320&q=70&auto=format&fit=crop', alt: 'Media partner spotlight four' },
-    { src: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=320&q=70&auto=format&fit=crop', alt: 'Media partner spotlight five' },
+  const stats = [
+    { label: 'Press Releases', value: '12,000+', icon: Newspaper },
+    { label: 'Media Outlets', value: '850+', icon: Radio },
+    { label: 'Countries Reached', value: '60+', icon: Globe2 },
+    { label: 'Monthly Readers', value: '2.4M', icon: TrendingUp },
+  ]
+
+  const categories = [
+    { label: 'Business', href: '/updates?category=business', color: 'bg-[#FFB997]/20 text-[#843B62] border-[#FFB997]/40' },
+    { label: 'Technology', href: '/updates?category=technology', color: 'bg-[#F67E7D]/15 text-[#843B62] border-[#F67E7D]/35' },
+    { label: 'Finance', href: '/updates?category=finance', color: 'bg-[#843B62]/10 text-[#843B62] border-[#843B62]/25' },
+    { label: 'Healthcare', href: '/updates?category=healthcare', color: 'bg-[#FFB997]/20 text-[#843B62] border-[#FFB997]/40' },
+    { label: 'Energy', href: '/updates?category=energy', color: 'bg-[#F67E7D]/15 text-[#843B62] border-[#F67E7D]/35' },
   ]
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-[#171717]">
+    <div className="min-h-screen bg-[#fdf8f5] text-[#0B032D]">
       <NavbarShell />
 
-      <section className="relative overflow-hidden bg-[#DA0037] text-white">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.35'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-          aria-hidden
-        />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:flex lg:items-center lg:gap-12 lg:px-8 lg:py-20">
-          <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/80">Release media distribution</p>
-            <h1 className="mt-4 font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.08] tracking-[-0.035em] sm:text-5xl lg:text-[3.15rem]">
-              Reach journalists, readers, and search with wire-ready announcements.
-            </h1>
-            <p className="mt-6 text-lg leading-relaxed text-white/90">{SITE_CONFIG.description}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/create/mediaDistribution"
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#171717] px-6 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-black"
-              >
-                Submit a release
-              </Link>
-              <Link
-                href="/updates"
-                className="inline-flex h-12 items-center justify-center rounded-full border border-white/70 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white hover:text-[#DA0037]"
-              >
-                Browse latest news
-              </Link>
-            </div>
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden bg-[#0B032D]">
+        {/* decorative gradient blobs */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute -left-32 -top-32 h-[500px] w-[500px] rounded-full bg-[#843B62]/30 blur-[120px]" />
+          <div className="absolute -right-20 top-20 h-[400px] w-[400px] rounded-full bg-[#F67E7D]/20 blur-[100px]" />
+          <div className="absolute bottom-0 left-1/2 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-[#FFB997]/10 blur-[80px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-20">
+          {/* ticker bar */}
+          <div className="mb-8 flex items-center gap-3 overflow-hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
+            <span className="shrink-0 rounded-full bg-[#F67E7D] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+              Live Wire
+            </span>
+            <p className="truncate text-sm text-white/70">
+              {hero?.title || 'Latest press releases and media announcements from global organizations'}
+            </p>
+            <Link href="/updates" className="ml-auto shrink-0 text-xs font-semibold text-[#FFB997] hover:text-white">
+              View all →
+            </Link>
           </div>
-          <div className="relative mt-12 hidden flex-1 lg:mt-0 lg:block">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-white/25 shadow-[0_40px_120px_rgba(0,0,0,0.35)]">
-              <ContentImage
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=85&auto=format&fit=crop"
-                alt="Communications team collaborating"
-                fill
-                className="object-cover"
-                priority
-                intrinsicWidth={1200}
-                intrinsicHeight={900}
-              />
+
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#843B62]/40 bg-[#843B62]/20 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FFB997]">
+                <Megaphone className="h-3.5 w-3.5" />
+                Media Press Release Hub
+              </div>
+              <h1 className="mt-5 font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.06] tracking-[-0.035em] text-white sm:text-5xl lg:text-[3.2rem]">
+                Your source for verified press releases and media announcements.
+              </h1>
+              <p className="mt-5 text-lg leading-relaxed text-white/75">
+                {SITE_CONFIG.description}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/updates"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#843B62] to-[#F67E7D] px-6 text-sm font-semibold text-white shadow-lg shadow-[#843B62]/30 transition hover:opacity-90"
+                >
+                  Browse Releases
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/create/mediaDistribution"
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-white/25 bg-white/8 px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
+                >
+                  Submit a Release
+                </Link>
+              </div>
+
+              {/* category pills */}
+              <div className="mt-8 flex flex-wrap gap-2">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.label}
+                    href={cat.href}
+                    className="rounded-full border border-white/15 bg-white/8 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/15 hover:text-white"
+                  >
+                    {cat.label}
+                  </Link>
+                ))}
+              </div>
             </div>
+
+            {/* hero featured card */}
+            {hero ? (
+              <Link
+                href={`/updates/${hero.slug}`}
+                className="group relative overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_40px_100px_rgba(11,3,45,0.5)] transition hover:border-[#F67E7D]/40"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <ContentImage
+                    src={getPostImage(hero)}
+                    alt={hero.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    priority
+                    intrinsicWidth={800}
+                    intrinsicHeight={600}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B032D] via-[#0B032D]/40 to-transparent" />
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <span className="inline-block rounded-full bg-[#F67E7D] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+                    {getCategory(hero)}
+                  </span>
+                  <h2 className="mt-3 font-[family-name:var(--font-display)] text-xl font-semibold leading-snug text-white sm:text-2xl">
+                    {hero.title}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 text-sm text-white/70">{excerpt(hero.summary, 120)}</p>
+                  <div className="mt-4 flex items-center gap-2 text-xs text-white/50">
+                    <Clock className="h-3.5 w-3.5" />
+                    {formatDate(hero.publishedAt) || 'Latest release'}
+                  </div>
+                </div>
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>
 
-      <section className="border-b border-[#ebebeb] bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">How TrendoPR works</h2>
-            <p className="mt-4 text-[#444444]">
-              A calm, repeatable flow from draft to distribution—without turning your newsroom into a generic feed template.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                title: 'Prepare',
-                body: 'Structure headlines, hero imagery, and compliance-friendly body copy in one editor.',
-                icon: FileText,
-              },
-              {
-                title: 'Distribute',
-                body: 'Publish to your TrendoPR archive with categories that map cleanly to search and social previews.',
-                icon: Share2,
-              },
-              {
-                title: 'Track',
-                body: 'Measure pickup momentum with engagement-friendly layouts designed for scanning on mobile and desktop.',
-                icon: BarChart3,
-              },
-            ].map((step) => (
-              <div
-                key={step.title}
-                className="rounded-2xl border border-[#e8e8e8] bg-[#fafafa] p-6 text-left shadow-[0_12px_40px_rgba(23,23,23,0.05)] transition hover:-translate-y-0.5 hover:border-[#DA0037]/25"
-              >
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#171717] text-white">
-                  <step.icon className="h-5 w-5" aria-hidden />
+      {/* ── STATS STRIP ── */}
+      <section className="border-y border-[#f0d8cc] bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex items-center gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FFB997]/30 to-[#F67E7D]/20">
+                  <stat.icon className="h-5 w-5 text-[#843B62]" />
                 </div>
-                <h3 className="mt-5 text-xl font-semibold">{step.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#444444]">{step.body}</p>
+                <div>
+                  <p className="text-2xl font-bold text-[#0B032D]">{stat.value}</p>
+                  <p className="text-xs text-[#3d2a4a]/70">{stat.label}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-[#EDEDED] py-16 sm:py-20">
+      {/* ── FEATURED RELEASES ── */}
+      <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex items-end justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-semibold tracking-[-0.03em]">Latest release media</h2>
-              <p className="mt-2 text-[#444444]">Fresh entries from the TrendoPR wire—optimized for fast scanning.</p>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#843B62]/20 bg-[#843B62]/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#843B62]">
+                <Radio className="h-3.5 w-3.5" />
+                Featured Releases
+              </div>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Top stories this week</h2>
             </div>
-            <Link
-              href="/updates"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#DA0037] hover:underline"
-            >
-              View all
-              <ArrowRight className="h-4 w-4" />
+            <Link href="/updates" className="hidden items-center gap-1.5 text-sm font-semibold text-[#843B62] hover:text-[#F67E7D] sm:flex">
+              View all <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
 
-          {grid.length ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {grid.map((post) => (
+          {featured.length ? (
+            <div className="mt-10 grid gap-6 lg:grid-cols-3">
+              {featured.map((post, i) => (
                 <Link
                   key={post.id}
                   href={`/updates/${post.slug}`}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group flex flex-col overflow-hidden rounded-[1.8rem] border border-[#f0d8cc] bg-white shadow-[0_12px_40px_rgba(11,3,45,0.06)] transition hover:-translate-y-1 hover:border-[#F67E7D]/40 hover:shadow-[0_20px_60px_rgba(132,59,98,0.12)]"
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-[#e5e5e5]">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[#fce8df]">
                     <ContentImage
                       src={getPostImage(post)}
-                      alt=""
+                      alt={post.title}
                       fill
-                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      intrinsicWidth={800}
-                      intrinsicHeight={500}
+                      intrinsicWidth={640}
+                      intrinsicHeight={400}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B032D]/30 to-transparent opacity-60" />
+                    <span className="absolute left-4 top-4 rounded-full bg-[#843B62] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white">
+                      {getCategory(post)}
+                    </span>
                   </div>
                   <div className="flex flex-1 flex-col p-5">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#DA0037]">
-                      {String((post.content as { category?: string } | undefined)?.category || 'Release media')}
-                    </p>
-                    <h3 className="mt-2 line-clamp-2 text-lg font-semibold leading-snug text-[#171717] group-hover:text-[#DA0037]">
+                    <h3 className="line-clamp-2 text-lg font-semibold leading-snug text-[#0B032D] group-hover:text-[#843B62]">
                       {post.title}
                     </h3>
-                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[#444444]">{excerpt(post.summary)}</p>
-                    <span className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#171717]">Read story →</span>
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[#3d2a4a]/70">{excerpt(post.summary)}</p>
+                    <div className="mt-auto flex items-center justify-between pt-4">
+                      <span className="text-xs text-[#3d2a4a]/50">{formatDate(post.publishedAt)}</span>
+                      <span className="text-xs font-semibold text-[#843B62]">Read more →</span>
+                    </div>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="mt-10 rounded-2xl border border-dashed border-[#cfcfcf] bg-white p-12 text-center text-[#444444]">
-              <p className="text-lg font-semibold text-[#171717]">Your wire is ready for the first announcement.</p>
-              <p className="mt-2 text-sm">Connect your publishing feed or submit a release to see stories appear here.</p>
-              <Link
-                href="/create/mediaDistribution"
-                className="mt-6 inline-flex h-11 items-center justify-center rounded-full bg-[#DA0037] px-6 text-sm font-semibold text-white"
-              >
+            <div className="mt-10 rounded-[2rem] border border-dashed border-[#f0d8cc] bg-white p-12 text-center">
+              <p className="text-lg font-semibold text-[#0B032D]">Your wire is ready for the first announcement.</p>
+              <p className="mt-2 text-sm text-[#3d2a4a]/70">Connect your publishing feed or submit a release to see stories appear here.</p>
+              <Link href="/create/mediaDistribution" className="mt-6 inline-flex h-11 items-center justify-center rounded-full bg-[#843B62] px-6 text-sm font-semibold text-white">
                 Draft a release
               </Link>
             </div>
@@ -197,87 +255,174 @@ export async function HomePageOverride() {
         </div>
       </section>
 
-      <section className="border-y border-[#ebebeb] bg-white py-14">
+      {/* ── CATEGORIES BAND ── */}
+      <section className="border-y border-[#f0d8cc] bg-gradient-to-r from-[#0B032D] to-[#843B62] py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-[11px] font-semibold uppercase tracking-[0.28em] text-[#444444]">
-            Trusted by teams who need disciplined coverage
-          </p>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-5">
-            {trust.map((item) => (
+          <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#FFB997]">Browse by topic</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">Find releases in your industry</h2>
+            </div>
+            <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.label}
+                  href={cat.href}
+                  className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── LATEST GRID ── */}
+      <section className="bg-[#fdf0ea]/50 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-[-0.03em]">Latest from the wire</h2>
+              <p className="mt-2 text-sm text-[#3d2a4a]/70">Fresh press releases — updated continuously.</p>
+            </div>
+            <Link href="/updates" className="hidden items-center gap-1.5 text-sm font-semibold text-[#843B62] hover:text-[#F67E7D] sm:flex">
+              Full archive <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          {grid.length ? (
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {grid.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/updates/${post.slug}`}
+                  className="group flex gap-4 rounded-2xl border border-[#f0d8cc] bg-white p-4 shadow-sm transition hover:border-[#F67E7D]/40 hover:shadow-md"
+                >
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[#fce8df]">
+                    <ContentImage
+                      src={getPostImage(post)}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="80px"
+                      intrinsicWidth={160}
+                      intrinsicHeight={160}
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#F67E7D]">{getCategory(post)}</span>
+                    <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-[#0B032D] group-hover:text-[#843B62]">
+                      {post.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-[#3d2a4a]/50">{formatDate(post.publishedAt)}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="mt-10 text-center">
+            <Link
+              href="/updates"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full border-2 border-[#843B62] px-8 text-sm font-semibold text-[#843B62] transition hover:bg-[#843B62] hover:text-white"
+            >
+              View all press releases
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section className="border-t border-[#f0d8cc] bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#843B62]/20 bg-[#843B62]/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#843B62]">
+              <BarChart2 className="h-3.5 w-3.5" />
+              How it works
+            </div>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">From draft to distribution in minutes</h2>
+            <p className="mt-4 text-[#3d2a4a]/70">A streamlined workflow for communications teams that need speed without sacrificing credibility.</p>
+          </div>
+
+          <div className="mt-14 grid gap-8 md:grid-cols-3">
+            {[
+              {
+                step: '01',
+                title: 'Write & Structure',
+                body: 'Compose your release with a clear headline, lead paragraph, and supporting details. Our structured format ensures every element is in the right place.',
+                color: 'from-[#FFB997]/30 to-[#FFB997]/10',
+                border: 'border-[#FFB997]/40',
+              },
+              {
+                step: '02',
+                title: 'Publish to the Wire',
+                body: 'Submit your release to the markets.trendopr.com archive with category tags and metadata. Your announcement gets a canonical URL instantly shareable with stakeholders.',
+                color: 'from-[#F67E7D]/25 to-[#F67E7D]/8',
+                border: 'border-[#F67E7D]/35',
+              },
+              {
+                step: '03',
+                title: 'Track & Distribute',
+                body: 'Monitor engagement, share with media contacts, and keep a permanent public record. Readers can filter by category and date to find exactly what they need.',
+                color: 'from-[#843B62]/20 to-[#843B62]/5',
+                border: 'border-[#843B62]/25',
+              },
+            ].map((item) => (
               <div
-                key={item.alt}
-                className="relative aspect-[5/3] overflow-hidden rounded-xl border border-[#e8e8e8] bg-[#f4f4f4]"
+                key={item.step}
+                className={`relative overflow-hidden rounded-[1.8rem] border ${item.border} bg-gradient-to-br ${item.color} p-7`}
               >
-                <ContentImage
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  className="object-cover grayscale contrast-125"
-                  sizes="(max-width: 640px) 50vw, 20vw"
-                  intrinsicWidth={320}
-                  intrinsicHeight={192}
-                />
+                <span className="text-5xl font-bold text-[#0B032D]/8">{item.step}</span>
+                <h3 className="mt-2 text-xl font-semibold text-[#0B032D]">{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#3d2a4a]/75">{item.body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <div>
-              <h2 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Distribution without the clutter</h2>
-              <p className="mt-4 text-[#444444]">
-                TrendoPR keeps the story first: readable type, confident spacing, and surfaces that feel like a modern wire—not a
-                repurposed directory skin.
+      {/* ── CTA BANNER ── */}
+      <section className="relative overflow-hidden bg-[#0B032D] py-16">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute right-0 top-0 h-[300px] w-[300px] rounded-full bg-[#843B62]/25 blur-[80px]" />
+          <div className="absolute bottom-0 left-0 h-[200px] w-[400px] rounded-full bg-[#F67E7D]/15 blur-[60px]" />
+        </div>
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+            <div className="max-w-2xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#FFB997]">Ready to publish?</p>
+              <h2 className="mt-3 text-3xl font-semibold leading-snug text-white sm:text-4xl">
+                Put your next announcement on the wire with confidence.
+              </h2>
+              <p className="mt-4 text-white/65">
+                Join thousands of communications teams who trust markets.trendopr.com for disciplined, credible press distribution.
               </p>
-              <ul className="mt-8 space-y-4 text-sm text-[#444444]">
-                <li className="flex gap-3">
-                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#DA0037]" />
-                  Category-aware archive with publish-window filters for busy readers.
-                </li>
-                <li className="flex gap-3">
-                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#DA0037]" />
-                  Detail pages with hero imagery, share tools, and related releases.
-                </li>
-              </ul>
             </div>
-            <div className="relative overflow-hidden rounded-[2rem] border border-[#e8e8e8] bg-[#EDEDED] shadow-[0_30px_80px_rgba(23,23,23,0.08)]">
-              <div className="relative aspect-[4/5] max-h-[520px]">
-                <ContentImage
-                  src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=900&q=85&auto=format&fit=crop"
-                  alt="Analyst reviewing coverage"
-                  fill
-                  className="object-cover"
-                  intrinsicWidth={900}
-                  intrinsicHeight={1120}
-                />
-              </div>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/create/mediaDistribution"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#FFB997] to-[#F67E7D] px-6 text-sm font-semibold text-[#0B032D] shadow-lg transition hover:opacity-90"
+              >
+                Submit a release
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-white/25 px-6 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Talk to us
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#DA0037] py-14 text-white">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:px-8">
-          <p className="max-w-3xl text-2xl font-semibold leading-snug sm:text-3xl">
-            Ready to put your next launch on the wire?
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/contact"
-              className="inline-flex h-12 items-center justify-center rounded-full border border-white/70 px-6 text-sm font-semibold text-white hover:bg-white/10"
-            >
-              Talk to us
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-[#ebebeb] bg-white py-14 sm:py-16">
-        <div className="mx-auto max-w-3xl px-4 text-sm leading-relaxed text-[#444444] sm:px-6 lg:px-8">
-          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold text-[#171717]">Welcome to TrendoPR</h2>
+      {/* ── ABOUT STRIP ── */}
+      <section className="border-t border-[#f0d8cc] bg-white py-14 sm:py-16">
+        <div className="mx-auto max-w-3xl px-4 text-sm leading-relaxed text-[#3d2a4a]/75 sm:px-6 lg:px-8">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold text-[#0B032D]">Welcome to {SITE_CONFIG.name}</h2>
           <p className="mt-4">
             {SITE_CONFIG.name} is a press-first distribution surface for teams that care about clarity. We bias toward legible
             headlines, credible metadata, and archive tooling that helps readers find the right story in seconds.
@@ -288,11 +433,11 @@ export async function HomePageOverride() {
           </p>
           <p className="mt-4">
             Explore the{' '}
-            <Link href="/updates" className="font-semibold text-[#DA0037] underline-offset-4 hover:underline">
+            <Link href="/updates" className="font-semibold text-[#843B62] underline-offset-4 hover:underline">
               latest releases
             </Link>
             , or{' '}
-            <Link href="/contact" className="font-semibold text-[#DA0037] underline-offset-4 hover:underline">
+            <Link href="/contact" className="font-semibold text-[#843B62] underline-offset-4 hover:underline">
               contact the desk
             </Link>{' '}
             for a tailored walkthrough.
