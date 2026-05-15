@@ -59,7 +59,7 @@ export const SITE_CONFIG: SiteConfig = {
       'PR wire',
       'announcements',
       'communications',
-      'TrendoPR',
+      'markets.trendopr.com',
       siteIdentity.name,
     ],
   },
