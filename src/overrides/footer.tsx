@@ -1,113 +1,139 @@
 import Link from 'next/link'
-import { Newspaper, Twitter, Linkedin, Facebook, Mail } from 'lucide-react'
+import { FileText, ArrowRight } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { siteContent } from '@/config/site.content'
+import { fetchTaskPosts } from '@/lib/task-data'
+import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
 
 export const FOOTER_OVERRIDE_ENABLED = true
 
-const categories = [
-  { label: 'Business', href: '/updates?category=business' },
-  { label: 'Technology', href: '/updates?category=technology' },
-  { label: 'Finance', href: '/updates?category=finance' },
-  { label: 'Healthcare', href: '/updates?category=healthcare' },
-  { label: 'Energy', href: '/updates?category=energy' },
-  { label: 'Policy', href: '/updates?category=policy' },
+const columns = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Press releases', href: '/updates' },
+      { label: 'Submit a release', href: '/create/mediaDistribution' },
+      { label: 'Search', href: '/search' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
+      { label: 'Press room', href: '/press' },
+    ],
+  },
+  {
+    title: 'Resources',
+    links: [
+      { label: 'Privacy', href: '/privacy' },
+      { label: 'Terms', href: '/terms' },
+      { label: 'Cookies', href: '/cookies' },
+    ],
+  },
 ]
 
-const socialLinks = [
-  { name: 'Twitter / X', href: 'https://twitter.com', icon: Twitter },
-  { name: 'LinkedIn', href: 'https://linkedin.com', icon: Linkedin },
-  { name: 'Facebook', href: 'https://facebook.com', icon: Facebook },
-  { name: 'Newsletter', href: '/newsletter', icon: Mail },
-]
+const getCategoryLabel = (value: string) => {
+  const normalized = normalizeCategory(value)
+  return CATEGORY_OPTIONS.find((item) => item.slug === normalized)?.name || value
+}
 
-export function FooterOverride() {
-  const primary = SITE_CONFIG.tasks.find((t) => t.enabled)
+export async function FooterOverride() {
+  const primary = SITE_CONFIG.tasks.find((t) => t.enabled) || SITE_CONFIG.tasks[0]
+  const posts = await fetchTaskPosts('mediaDistribution', 200, { allowMockFallback: false })
+  const categories = Array.from(
+    new Map(
+      posts
+        .map((post) => {
+          const content = post.content && typeof post.content === 'object' ? (post.content as Record<string, unknown>) : {}
+          const raw = typeof content.category === 'string' ? content.category.trim() : ''
+          if (!raw) return null
+          const slug = normalizeCategory(raw)
+          return {
+            slug,
+            name: getCategoryLabel(raw),
+          }
+        })
+        .filter((item): item is { slug: string; name: string } => Boolean(item))
+        .map((item) => [item.slug, item])
+    ).values()
+  ).slice(0, 8)
 
   return (
-    <footer className="border-t border-[#843B62]/20 bg-[#0B032D] text-white">
-      {/* top gradient accent */}
-      <div className="h-1 w-full bg-gradient-to-r from-[#843B62] via-[#F67E7D] to-[#FFB997]" />
-
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
-          {/* Brand column */}
+    <footer className="border-t border-white/10 bg-[linear-gradient(180deg,#04004a_0%,#1c045d_48%,#0f0238_100%)] text-white">
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
           <div>
-            <Link href="/" className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#843B62] to-[#F67E7D]">
-                <Newspaper className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10">
+                <span className="font-[family-name:var(--font-display)] text-xl font-semibold text-[#f3c5ff]">{SITE_CONFIG.name.slice(0, 1).toLowerCase()}</span>
               </span>
-              <span className="text-lg font-semibold">{SITE_CONFIG.name}</span>
-            </Link>
-            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#FFB997]/60">{siteContent.footer.tagline}</p>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/60">{SITE_CONFIG.description}</p>
+              <div>
+                <p className="font-[family-name:var(--font-display)] text-xl font-semibold">{SITE_CONFIG.name}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f3c5ff]/80">{siteContent.footer.tagline}</p>
+              </div>
+            </div>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">{SITE_CONFIG.description}</p>
+            {primary ? (
+              <Link
+                href={primary.route}
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#f3c5ff] px-4 py-2.5 text-sm font-semibold text-[#04004a] transition hover:bg-white"
+              >
+                <FileText className="h-4 w-4" />
+                Browse {primary.label}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : null}
+          </div>
+          {columns.map((col) => (
+            <div key={col.title}>
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f3c5ff]/75">{col.title}</h3>
+              <ul className="mt-5 space-y-3 text-sm">
+                {col.links.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="text-white/75 transition hover:text-white">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
 
-            {/* Social links */}
-            <div className="mt-6 flex gap-2">
-              {socialLinks.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.name}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition hover:border-[#F67E7D]/40 hover:bg-[#843B62]/20 hover:text-[#FFB997]"
+        {categories.length ? (
+          <div className="mt-10 border-t border-white/10 pt-8">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f3c5ff]/75">Categories</h3>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/updates?category=${category.slug}`}
+                  className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-[#f3c5ff]/60 hover:bg-white/10 hover:text-white"
                 >
-                  <item.icon className="h-4 w-4" />
-                </a>
+                  {category.name}
+                </Link>
               ))}
             </div>
           </div>
+        ) : null}
 
-          {/* Categories */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.22em] text-[#FFB997]/70">Topics</h3>
-            <ul className="mt-4 space-y-3 text-sm text-white/65">
-              {categories.map((item) => (
-                <li key={item.label}>
-                  <Link href={item.href} className="transition hover:text-[#FFB997]">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/privacy" className="hover:text-white/80">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-white/80">
+              Terms
+            </Link>
+            <Link href="/contact" className="hover:text-white/80">
+              Support
+            </Link>
           </div>
-
-          {/* Product */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.22em] text-[#FFB997]/70">Product</h3>
-            <ul className="mt-4 space-y-3 text-sm text-white/65">
-              {primary ? (
-                <li>
-                  <Link href={primary.route} className="transition hover:text-[#FFB997]">
-                    {primary.label}
-                  </Link>
-                </li>
-              ) : null}
-              <li><Link href="/search" className="transition hover:text-[#FFB997]">Search archive</Link></li>
-              <li><Link href="/create/mediaDistribution" className="transition hover:text-[#FFB997]">Submit a release</Link></li>
-            </ul>
-          </div>
-
-          {/* Company + Legal */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-[0.22em] text-[#FFB997]/70">Company</h3>
-            <ul className="mt-4 space-y-3 text-sm text-white/65">
-              <li><Link href="/about" className="transition hover:text-[#FFB997]">About</Link></li>
-              <li><Link href="/contact" className="transition hover:text-[#FFB997]">Contact</Link></li>
-            </ul>
-            <h3 className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-[#FFB997]/70">Legal</h3>
-            <ul className="mt-4 space-y-3 text-sm text-white/65">
-              <li><Link href="/privacy" className="transition hover:text-[#FFB997]">Privacy</Link></li>
-              <li><Link href="/terms" className="transition hover:text-[#FFB997]">Terms</Link></li>
-              <li><Link href="/cookies" className="transition hover:text-[#FFB997]">Cookies</Link></li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/8 pt-8 text-sm text-white/40 sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.</p>
-          <p className="text-white/30">Distribution tools for modern communications teams.</p>
         </div>
       </div>
     </footer>
