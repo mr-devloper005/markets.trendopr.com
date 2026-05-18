@@ -47,9 +47,9 @@ const footerLinks = {
 }
 
 const socialLinks = [
-  { name: 'Twitter', href: 'https://twitter.com', icon: Twitter },
-  { name: 'GitHub', href: 'https://github.com', icon: Github },
-  { name: 'LinkedIn', href: 'https://linkedin.com', icon: Linkedin },
+  // { name: 'Twitter', href: 'https://twitter.com', icon: Twitter },
+  // { name: 'GitHub', href: 'https://github.com', icon: Github },
+  // { name: 'LinkedIn', href: 'https://linkedin.com', icon: Linkedin },
 ]
 
 export function Footer() {
