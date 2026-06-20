@@ -70,7 +70,7 @@ export function TaskListClient({ task, initialPosts, category, publishedAfter }:
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={task === "mediaDistribution" ? "space-y-5" : "grid gap-6 sm:grid-cols-2 lg:grid-cols-4"}>
       {merged.map((post) => {
         const localOnly = (post as any).localOnly;
         const href = localOnly
