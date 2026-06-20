@@ -27,7 +27,7 @@ const getExcerpt = (value?: string | null, maxLength = 140) => {
   const text = stripHtml(value)
   if (!text) return ''
   if (text.length <= maxLength) return text
-  return `${text.slice(0, maxLength).trimEnd()}…`
+  return `${text.slice(0, maxLength).trimEnd()}...`
 }
 
 const getContent = (post: SitePost): ListingContent => {
@@ -199,6 +199,70 @@ export function TaskPostCard({
           <h3 className={`mt-3 line-clamp-2 text-lg font-semibold leading-snug group-hover:opacity-85 ${visualVariant.title}`}>{post.title}</h3>
           <p className={`mt-2 line-clamp-3 text-sm leading-7 ${visualVariant.muted}`}>{getExcerpt(content.description || post.summary, compact ? 120 : 180) || 'Explore this bookmark.'}</p>
           {content.email ? <div className={`mt-3 inline-flex items-center gap-1 text-xs ${visualVariant.muted}`}><Mail className="h-3.5 w-3.5" />{content.email}</div> : null}
+        </div>
+      </Link>
+    )
+  }
+
+  if (variant === 'mediaDistribution') {
+    const hasRealImage = image && !image.startsWith('/placeholder')
+
+    return (
+      <Link
+        href={href}
+        className="group block overflow-hidden rounded-2xl border border-[#f0d8cc] bg-white shadow-[0_14px_40px_rgba(11,3,45,0.06)] transition duration-300 hover:-translate-y-0.5 hover:border-[#843B62]/30 hover:shadow-[0_20px_50px_rgba(132,59,98,0.1)]"
+      >
+        <div className={`flex flex-col ${hasRealImage ? 'md:flex-row' : ''}`}>
+          {hasRealImage ? (
+            <div className="relative h-56 w-full overflow-hidden bg-[#f8eae3] md:h-auto md:w-[36%] md:min-w-[280px]">
+              <ContentImage
+                src={image}
+                alt={altText}
+                fill
+                sizes="(max-width: 768px) 100vw, 360px"
+                quality={75}
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                intrinsicWidth={960}
+                intrinsicHeight={720}
+              />
+            </div>
+          ) : null}
+          <div className="flex flex-1 flex-col p-5 sm:p-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#843B62] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                <Tag className="h-3.5 w-3.5" />
+                {category}
+              </span>
+              {content.location ? (
+                <span className="inline-flex items-center gap-1 text-xs text-[#3d2a4a]/70">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {content.location}
+                </span>
+              ) : null}
+            </div>
+
+            <h3 className="mt-3 line-clamp-2 text-2xl font-semibold leading-tight text-[#0B032D] transition group-hover:text-[#843B62]">
+              {post.title}
+            </h3>
+            <p className="mt-3 line-clamp-3 text-sm leading-7 text-[#3d2a4a]/80">
+              {getExcerpt(content.description || post.summary, 220) || 'Read the full release update.'}
+            </p>
+
+            <div className="mt-auto flex items-center justify-between gap-3 pt-6">
+              {content.email ? (
+                <span className="inline-flex items-center gap-1 text-xs text-[#3d2a4a]/70">
+                  <Mail className="h-3.5 w-3.5" />
+                  {content.email}
+                </span>
+              ) : (
+                <span className="text-xs text-[#3d2a4a]/60">Official release update</span>
+              )}
+              <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#843B62]">
+                Read release
+                <ArrowUpRight className="h-4 w-4" />
+              </span>
+            </div>
+          </div>
         </div>
       </Link>
     )

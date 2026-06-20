@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Facebook, Linkedin, Link2, Mail, Twitter } from 'lucide-react'
+import { ArrowRight, Facebook, Linkedin, Link2, Mail, Twitter } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { ContentImage } from '@/components/shared/content-image'
@@ -66,47 +66,37 @@ export async function TaskDetailPageOverride({ slug }: { task: TaskKey; slug: st
   const pageUrl = `${SITE_CONFIG.baseUrl.replace(/\/$/, '')}${buildPostUrl('mediaDistribution', post.slug)}`
   const shareText = encodeURIComponent(post.title)
   const shareUrl = encodeURIComponent(pageUrl)
-  const date = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    : ''
-
   return (
-    <div className="min-h-screen bg-white text-foreground">
+    <div className="min-h-screen bg-[#ececec] text-[#0a1633]">
       <NavbarShell />
 
-      <article className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:pt-12">
-        <nav className="text-xs font-medium text-muted-foreground">
-          <Link href="/" className="hover:text-primary">
+      <article className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:pt-12">
+        <nav className="text-xs font-medium text-[#0a1633]/65">
+          <Link href="/" className="hover:text-[#2a66e5]">
             Home
           </Link>
           <span className="mx-2 opacity-40">/</span>
-          <Link href={archivePath} className="hover:text-primary">
+          <Link href={archivePath} className="hover:text-[#2a66e5]">
             Press releases
           </Link>
           <span className="mx-2 opacity-40">/</span>
-          <Link href={`${archivePath}?category=${categorySlug}`} className="hover:text-primary">
+          <Link href={`${archivePath}?category=${categorySlug}`} className="hover:text-[#2a66e5]">
             {categoryLabel}
           </Link>
         </nav>
 
-        <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-14">
-          <div className="min-w-0">
-            <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-[1.12] tracking-[-0.03em] text-foreground sm:text-4xl lg:text-[2.35rem]">
+        <div className="mt-8 overflow-hidden rounded-[2rem] border border-[#0a1633]/10 bg-white shadow-[0_28px_70px_rgba(10,22,51,0.08)]">
+          <div className="bg-[linear-gradient(180deg,#1f2557_0%,#232b66_60%,#252f6e_100%)] px-6 py-10 text-white sm:px-8 lg:px-10">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/75">{categoryLabel}</p>
+            <h1 className="mt-4 max-w-4xl text-3xl font-semibold leading-[1.1] tracking-[-0.03em] sm:text-4xl lg:text-5xl">
               {post.title}
             </h1>
-
-            {date ? (
-              <div className="mt-5 text-sm text-muted-foreground">
-                <span>{date}</span>
-              </div>
-            ) : null}
-
             <div className="mt-6 flex flex-wrap gap-2">
               <a
                 href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition hover:bg-white/20"
                 aria-label="Share on X"
               >
                 <Twitter className="h-4 w-4" />
@@ -115,7 +105,7 @@ export async function TaskDetailPageOverride({ slug }: { task: TaskKey; slug: st
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition hover:bg-white/20"
                 aria-label="Share on LinkedIn"
               >
                 <Linkedin className="h-4 w-4" />
@@ -124,47 +114,58 @@ export async function TaskDetailPageOverride({ slug }: { task: TaskKey; slug: st
                 href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition hover:bg-white/20"
                 aria-label="Share on Facebook"
               >
                 <Facebook className="h-4 w-4" />
               </a>
               <a
                 href={`mailto:?subject=${shareText}&body=${shareUrl}`}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition hover:bg-white/20"
                 aria-label="Email this release"
               >
                 <Mail className="h-4 w-4" />
               </a>
-              <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/30 px-3 py-2 text-xs text-white/80">
                 <Link2 className="h-3.5 w-3.5" />
                 {pageUrl.replace(/^https?:\/\//, '')}
               </span>
             </div>
+          </div>
 
+          <div className="grid gap-12 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-14 lg:px-10">
+          <div className="min-w-0">
             {hero ? (
-              <div className="relative mt-10 aspect-[16/9] w-full overflow-hidden rounded-[1.25rem] border border-border bg-muted shadow-sm">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[1.25rem] border border-[#0a1633]/12 bg-[#f5f7fc] shadow-sm">
                 <ContentImage src={hero} alt={post.title} fill className="object-cover" priority />
               </div>
             ) : null}
 
-            <RichContent html={html} className="article-content mt-10 max-w-none text-[1.05rem] leading-[1.75] text-foreground/90" />
+            <RichContent html={html} className="article-content mt-10 max-w-none text-[1.05rem] leading-[1.75] text-[#0a1633]/90" />
           </div>
 
           <aside className="space-y-6 lg:pt-2">
-            <div className="rounded-[1.25rem] border border-border bg-white p-6 shadow-sm">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">More releases</p>
+            <div className="rounded-[1.25rem] border border-[#0a1633]/10 bg-[#f5f7fc] p-6 shadow-sm">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#0a1633]/60">More releases</p>
               <ul className="mt-4 space-y-4">
                 {related.map((item) => (
                   <li key={item.id}>
-                    <Link href={buildPostUrl('mediaDistribution', item.slug)} className="block text-sm font-semibold leading-snug text-foreground hover:text-primary">
+                    <Link href={buildPostUrl('mediaDistribution', item.slug)} className="block text-sm font-semibold leading-snug text-[#0a1633] hover:text-[#2a66e5]">
                       {item.title}
                     </Link>
                   </li>
                 ))}
               </ul>
+              <Link
+                href={archivePath}
+                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#2a66e5] hover:text-[#1f55c9]"
+              >
+                Back to archive
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </aside>
+        </div>
         </div>
       </article>
 

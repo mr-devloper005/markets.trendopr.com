@@ -26,16 +26,18 @@ export function PressArchiveToolbar() {
   ] as const
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div className="min-w-[220px]">
-        <label htmlFor="archive-category" className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3d2a4a]/60">
-          Category
+    <div className="flex flex-col gap-5">
+      <div className="rounded-xl border border-[#f0d8cc] bg-white p-4 sm:p-5">
+        <label htmlFor="archive-category-select" className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3d2a4a]/60">
+          Category-wise search
         </label>
         <select
-          id="archive-category"
+          id="archive-category-select"
           value={category}
-          onChange={(e) => router.push(buildUpdatesHref(e.target.value, range))}
-          className="mt-1.5 h-11 w-full rounded-xl border border-[#f0d8cc] bg-white px-3 text-sm text-[#0B032D] outline-none ring-[#843B62]/30 focus:ring-2"
+          onChange={(e) => {
+            router.push(buildUpdatesHref(e.target.value, range))
+          }}
+          className="mt-2 h-11 w-full rounded-xl border border-[#f0d8cc] bg-[#fff8f4] px-3 text-sm text-[#0B032D] outline-none ring-[#843B62]/30 focus:ring-2"
         >
           <option value="all">All categories</option>
           {CATEGORY_OPTIONS.map((item) => (

@@ -1,5 +1,4 @@
 import { Suspense } from 'react'
-import Link from 'next/link'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { TaskListClient } from '@/components/tasks/task-list-client'
@@ -40,12 +39,6 @@ export async function TaskListPageOverride({
                   imagery, and share tools.
                 </p>
               </div>
-              <Link
-                href="/create/mediaDistribution"
-                className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#843B62] to-[#F67E7D] px-6 text-sm font-semibold text-white shadow-md transition hover:opacity-90"
-              >
-                Submit a release
-              </Link>
             </div>
 
             <div className="mt-10 rounded-2xl border border-[#f0d8cc] bg-[#fdf0ea]/60 p-5 sm:p-6">
@@ -70,7 +63,7 @@ export async function TaskListPageOverride({
               <input
                 name="q"
                 type="search"
-                placeholder="Search headlines…"
+                placeholder="Search headlines..."
                 className="h-11 flex-1 rounded-xl border border-[#f0d8cc] bg-white px-4 text-sm outline-none ring-[#843B62]/25 focus:ring-2"
               />
               <button
